@@ -49,16 +49,16 @@ POSTGRES_HOST_NAME=<db_host_name>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/TomAston1996/doc-similarity-api-frontend.svg?style=for-the-badge
-[contributors-url]: https://github.com/TomAston1996/doc-similarity-api-frontend/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/TomAston1996/doc-similarity-api-frontend.svg?style=for-the-badge
-[forks-url]: https://github.com/TomAston1996/doc-similarity-api-frontend/network/members
-[stars-shield]: https://img.shields.io/github/stars/TomAston1996/doc-similarity-api-frontend.svg?style=for-the-badge
-[stars-url]: https://github.com/TomAston1996/doc-similarity-api-frontend/stargazers
-[issues-shield]: https://img.shields.io/github/issues/TomAston1996/doc-similarity-api-frontend.svg?style=for-the-badge
-[issues-url]: https://github.com/TomAston1996/doc-similarity-api-frontend/issues
-[license-shield]: https://img.shields.io/github/license/TomAston1996/doc-similarity-api-frontend.svg?style=for-the-badge
-[license-url]: https://github.com/TomAston1996/doc-similarity-api-frontend/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/TomAston1996/doc-similarity-api.svg?style=for-the-badge
+[contributors-url]: https://github.com/TomAston1996/doc-similarity-api/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/TomAston1996/doc-similarity-api.svg?style=for-the-badge
+[forks-url]: https://github.com/TomAston1996/doc-similarity-api/network/members
+[stars-shield]: https://img.shields.io/github/stars/TomAston1996/doc-similarity-api.svg?style=for-the-badge
+[stars-url]: https://github.com/TomAston1996/doc-similarity-api/stargazers
+[issues-shield]: https://img.shields.io/github/issues/TomAston1996/doc-similarity-api.svg?style=for-the-badge
+[issues-url]: https://github.com/TomAston1996/doc-similarity-api/issues
+[license-shield]: https://img.shields.io/github/license/TomAston1996/doc-similarity-api.svg?style=for-the-badge
+[license-url]: https://github.com/TomAston1996/doc-similarity-api/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/tomaston96
 [Python]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
