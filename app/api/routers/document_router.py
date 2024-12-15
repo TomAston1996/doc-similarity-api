@@ -30,7 +30,7 @@ async def get(id: int, db: Annotated[Session, Depends(database.get_db)]):
 
 
 @router.post('')
-async def post(document_body: document_schema.DocumentBase, db: Annotated[Session, Depends(database.get_db)]):
+async def post(document_body: document_schema.DocumentBase, db: Annotated[Session, Depends(database.get_db)]) -> dict:
     '''
     CREATE a new document
     '''
@@ -38,3 +38,4 @@ async def post(document_body: document_schema.DocumentBase, db: Annotated[Sessio
     db.add(db_document)
     db.commit()
     db.refresh(db_document)
+    return { 'id': db_document.id, 'title': db_document.title, 'content': db_document.content }
