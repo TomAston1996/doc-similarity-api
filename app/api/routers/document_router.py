@@ -1,27 +1,25 @@
+'''
+Document Endpoint
+Author: Tom Aston
+'''
+
+#external dependencies
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List, Annotated
 from sqlalchemy.orm import Session
 
+#local dependencies
 from app.models import document
 from app.schema import document_schema
-from app.core.database import SessionLocal
+from app.core.database import database
 
 router = APIRouter(
     prefix='/document',
     tags=['document']
 )
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-db_dependency = Annotated[Session, Depends(get_db)]
-
 @router.get('/{id}')
-async def get(id: int, db: db_dependency):
+async def get(id: int, db: Annotated[Session, Depends(database.get_db)]):
     '''
     GET a document by id number
     '''
@@ -30,8 +28,9 @@ async def get(id: int, db: db_dependency):
         raise HTTPException(status_code=404, detail='document id not found')
     return result
 
+
 @router.post('')
-async def post(document_body: document_schema.DocumentBase, db: db_dependency):
+async def post(document_body: document_schema.DocumentBase, db: Annotated[Session, Depends(database.get_db)]):
     '''
     CREATE a new document
     '''

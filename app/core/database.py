@@ -1,19 +1,52 @@
+'''
+Database
+Author: Tom Aston
+'''
+
+#external dependencies
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.ext.declarative import declarative_base, declared_attr, as_declarative
+from typing import Any, Generator
 
-import os
+#local dependencies
+from app.core.config import config_manager
 
-POSTGRES_PASSWORD = os.environ['POSTGRES_PASSWORD']
-POSTGRES_DB = os.environ['POSTGRES_DB']
-POSTGRES_USER = os.environ['POSTGRES_USER']
-POSTGRES_HOST_PORT = os.environ['POSTGRES_HOST_PORT']
-POSTGRES_HOST_NAME = os.environ['POSTGRES_HOST_NAME']
+@as_declarative()
+class BaseModel:
+    id: Any
+    __name__: str
 
-URL_DATABASE = f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST_NAME}:{POSTGRES_HOST_PORT}/{POSTGRES_DB}'
+    # Generate __tablename__ automatically
+    @declared_attr
+    def __tablename__(cls) -> str:
+        return cls.__name__.lower()
 
-engine = create_engine(URL_DATABASE)
+class Database:
+    pass
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    def __init__(self, db_url: str) -> None:
+        self.engine = create_engine(db_url, echo=True)
+        self.session_local = sessionmaker(
+            autocommit=False,
+            autoflush=False,
+            bind=self.engine
+        )
 
-Base = declarative_base()
+    def create_database(self) -> None:
+        '''
+        create all the database tables defined in models if they don't already exist
+        '''
+        BaseModel.metadata.create_all(bind=self.engine)
+
+    def get_db(self) -> Generator[Session, Any, None]:
+        '''
+        get database session
+        '''
+        db: Session = self.session_local()
+        try:
+            yield db
+        finally:
+            db.close()
+
+database = Database(config_manager.DATABASE_URI)

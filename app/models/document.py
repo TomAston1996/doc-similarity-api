@@ -1,11 +1,18 @@
+'''
+Document Model
+Author: Tom Aston
+'''
+
+#external dependencies
 from sqlalchemy import Column, ForeignKey, Integer, String, TIMESTAMP
 from sqlalchemy.sql import func
 
-from app.core.database import Base
+#local dependencies
+from app.core.database import BaseModel
 
-class Document(Base):
+class Document(BaseModel):
     '''
-    docuement database model
+    document database model
     '''
     __tablename__ = 'document'
 

@@ -1,15 +1,32 @@
+'''
+Main
+Author: Tom Aston
+'''
+#external dependencies
 from fastapi import FastAPI
 
+#local dependencies
 from app.api.routes import routers
-from app.core.database import engine, Base
+from app.core.config import config_manager
 
-app = FastAPI()
 
-#create all the database tables defined in models if they don't already exist
-Base.metadata.create_all(bind=engine)
+class AppCreator:
+    '''
+    Application Context Creator
+    '''
+    def __init__(self) -> None:
+        self.app = FastAPI(
+            title=config_manager.PROJECT_NAME,
+            version=config_manager.VERSION
+        )
 
-@app.get('/')
-def root():
-    return 'server is running'
+        #set routes
+        @self.app.get('/')
+        def root() -> str:
+            return 'server is running'
 
-app.include_router(routers)
+        self.app.include_router(routers)
+
+app_creator = AppCreator()
+app = app_creator.app
+        
