@@ -30,7 +30,7 @@ class DocumentCreatedClientResponse(BaseModel):
 
 class DocumentGetByIdClientResponse(BaseModel):
     '''
-    client reponse for creating a new document
+    client reponse for getting a document by id
     '''
     id: int
     title: str
