@@ -11,7 +11,7 @@ The goal of Document Similarity API is use Natural Language Processing (NLP) to 
 The problem this is trying to solve is replication in the work place. Often, work is replicated and the context of historical work could aid in delivering new work more quickly.
 
 The plan is to use the SpaCy library to preprocess and calculate vector values for all documents uploaded to a Documents table. 
-When a user searches for a similarity match for any new documents the API should return any simialrity matches.
+When a user searches for a similarity match for any new documents the API should return any similarity matches.
 
 ## 🧑‍💻 Tech Stack
 
