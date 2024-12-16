@@ -4,38 +4,31 @@ Author: Tom Aston
 '''
 
 #external dependencies
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Annotated
+from fastapi import APIRouter, Depends
+from typing import Annotated
 from sqlalchemy.orm import Session
 
 #local dependencies
-from app.models import document
-from app.schema import document_schema
+from app.schema.document_schema import DocumentCreatedClientResponse, DocumentCreateClientRequest, DocumentGetByIdClientResponse
 from app.core.database import database
+from app.service import document_service
 
 router = APIRouter(
     prefix='/document',
     tags=['document']
 )
 
-@router.get('/{id}')
-async def get(id: int, db: Annotated[Session, Depends(database.get_db)]):
+@router.get('/{id}', response_model=DocumentGetByIdClientResponse)
+async def get(id: int, db: Annotated[Session, Depends(database.get_db)]) -> DocumentGetByIdClientResponse:
     '''
-    GET a document by id number
+    GET a document by id number endpoint
     '''
-    result = db.query(document.Document).filter(document.Document.id == id).first()
-    if not result:
-        raise HTTPException(status_code=404, detail='document id not found')
-    return result
+    return await document_service.get_by_id(id=id, db=db)
 
 
-@router.post('')
-async def post(document_body: document_schema.DocumentBase, db: Annotated[Session, Depends(database.get_db)]) -> dict:
+@router.post('', response_model=DocumentCreatedClientResponse)
+async def post(document_body: DocumentCreateClientRequest, db: Annotated[Session, Depends(database.get_db)]) -> DocumentCreatedClientResponse:
     '''
-    CREATE a new document
+    CREATE a new document endpoint
     '''
-    db_document = document.Document(title=document_body.title, content=document_body.content)
-    db.add(db_document)
-    db.commit()
-    db.refresh(db_document)
-    return { 'id': db_document.id, 'title': db_document.title, 'content': db_document.content }
+    return await document_service.create_document(document_body=document_body, db=db)
