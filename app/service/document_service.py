@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 
 #local dependencies
 from app.schema.document_schema import DocumentCreateClientRequest, DocumentCreatedClientResponse, DocumentGetByIdClientResponse
-from app.core.database import database
 from app.repository import document_repository
 
 
