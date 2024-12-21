@@ -23,8 +23,9 @@ class BaseModel:
         return cls.__name__.lower()
 
 class Database:
-    pass
-
+    '''
+    Database class
+    '''
     def __init__(self, db_url: str) -> None:
         self.engine = create_engine(db_url, echo=True)
         self.session_local = sessionmaker(

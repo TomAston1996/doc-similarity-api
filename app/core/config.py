@@ -12,7 +12,9 @@ import os
 load_dotenv()
 
 class ConfigManager(BaseSettings):
-
+    '''
+    ConfigManager
+    '''
     VERSION: str = '1.0.0'
 
     PROJECT_NAME: str = 'doc-similarity-api'
