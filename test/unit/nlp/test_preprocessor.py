@@ -11,7 +11,7 @@ class TestPreprocessorSuite:
         '''
         text_preprocessor = TextPreprocessor()
         test_string = 'Hello my name is John'
-        actual_cleaned_text = text_preprocessor.get_cleaned_text(test_string)
+        actual_cleaned_text = text_preprocessor._lowercase_text(test_string)
         expected_cleaned_text = 'hello my name is john'
         assert actual_cleaned_text == expected_cleaned_text
 
@@ -22,7 +22,7 @@ class TestPreprocessorSuite:
         '''
         text_preprocessor = TextPreprocessor()
         test_string = 'hello, how are you?'
-        actual_cleaned_text = text_preprocessor.get_cleaned_text(test_string)
+        actual_cleaned_text = text_preprocessor._remove_punctuation(test_string)
         expected_cleaned_text = 'hello how are you'
         assert actual_cleaned_text == expected_cleaned_text
 
@@ -33,6 +33,17 @@ class TestPreprocessorSuite:
         '''
         text_preprocessor = TextPreprocessor()
         test_string = 'hello i am 20 years old and my name is nine9'
-        actual_cleaned_text = text_preprocessor.get_cleaned_text(test_string)
+        actual_cleaned_text = text_preprocessor._remove_digits(test_string)
         expected_cleaned_text = 'hello i am  years old and my name is'
+        assert actual_cleaned_text == expected_cleaned_text
+
+
+    def test_stop_words_are_removed(self) -> None:
+        '''
+        ensure all stopwords are removed
+        '''
+        text_preprocessor = TextPreprocessor()
+        test_string = 'i am at the meeting call'
+        actual_cleaned_text = text_preprocessor._remove_stop_words(test_string)
+        expected_cleaned_text = 'meeting call'
         assert actual_cleaned_text == expected_cleaned_text

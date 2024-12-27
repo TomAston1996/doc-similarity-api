@@ -2,8 +2,15 @@
 Text Preprocessor
 Author: Tom Aston
 '''
+#inbuild dependencies
 import string
 import re
+
+#external dependencies
+import nltk
+from nltk.corpus import stopwords
+
+nltk.download('stopwords')
 
 class TextPreprocessor:
     '''
@@ -20,21 +27,24 @@ class TextPreprocessor:
     '''
 
     def get_cleaned_text(self, text: str) -> str:
-        
-        text = self.__lowercase_text(text)
-        text = self.__remove_punctuation(text)
-        text = self.__remove_digits(text)
+        '''
+        public facing method for cleaning text strings for NLP models
+        '''
+        text = self._lowercase_text(text)
+        text = self._remove_punctuation(text)
+        text = self._remove_digits(text)
+        text = self._remove_stop_words(text)
         return text
         
 
-    def __lowercase_text(self, text: str) -> str:
+    def _lowercase_text(self, text: str) -> str:
         '''
         return text in all lower case
         '''
         return text.lower()
 
 
-    def __remove_punctuation(self, text: str) -> str:
+    def _remove_punctuation(self, text: str) -> str:
         '''
         remove punctuation from text
         '''
@@ -42,16 +52,17 @@ class TextPreprocessor:
         return text.translate(table)
     
 
-    def __remove_digits(self, text: str) -> str:
+    def _remove_digits(self, text: str) -> str:
         '''
         remove digits and words containing digits
         '''
         return re.sub(r'\w*\d\w*', '', text).strip()
 
         
-    def __remove_stop_words():
+    def _remove_stop_words(self, text: str) -> str:
         '''
         remove stopwords from text inc. like 'the', 'and', 'or'
         '''
-        pass
+        stop_words = set(stopwords.words('english'))
+        return ' '.join([word for word in str(text).split() if word not in stop_words])
 
