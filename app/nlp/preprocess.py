@@ -34,6 +34,7 @@ class TextPreprocessor:
         text = self._remove_punctuation(text)
         text = self._remove_digits(text)
         text = self._remove_stop_words(text)
+        text = self._remove_whitespace(text)
         return text
         
 
@@ -65,4 +66,10 @@ class TextPreprocessor:
         '''
         stop_words = set(stopwords.words('english'))
         return ' '.join([word for word in str(text).split() if word not in stop_words])
+    
+    def _remove_whitespace(self, text: str) -> str:
+        '''
+        remove whitespace from text
+        '''
+        return ' '.join(text.split())
 

@@ -47,3 +47,14 @@ class TestPreprocessorSuite:
         actual_cleaned_text = text_preprocessor._remove_stop_words(test_string)
         expected_cleaned_text = 'meeting call'
         assert actual_cleaned_text == expected_cleaned_text
+
+
+    def test_remove_whitespace(self) -> None:
+        '''
+        ensure all whitespace is removed
+        '''
+        text_preprocessor = TextPreprocessor()
+        test_string = '  hello  how  are  you  '
+        actual_cleaned_text = text_preprocessor._remove_whitespace(test_string)
+        expected_cleaned_text = 'hello how are you'
+        assert actual_cleaned_text == expected_cleaned_text
