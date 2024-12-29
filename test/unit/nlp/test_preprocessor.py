@@ -58,3 +58,13 @@ class TestPreprocessorSuite:
         actual_cleaned_text = text_preprocessor._remove_whitespace(test_string)
         expected_cleaned_text = 'hello how are you'
         assert actual_cleaned_text == expected_cleaned_text
+
+    def test_lemmatization(self) -> None:
+        '''
+        ensure lemmatization is working
+        '''
+        text_preprocessor = TextPreprocessor()
+        test_string = 'running eating'
+        actual_cleaned_text = text_preprocessor._lemmatize_text(test_string)
+        expected_cleaned_text = 'run eat'
+        assert actual_cleaned_text == expected_cleaned_text
