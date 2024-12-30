@@ -86,5 +86,6 @@ class TextPreprocessor:
     def _lemmatize_text(self, text: str) -> str:
         '''
         lemmatize text
+        i.e. running -> run, ate -> eat
         '''
         return ' '.join([self.stemmer.stem(word) for word in text.split()])
