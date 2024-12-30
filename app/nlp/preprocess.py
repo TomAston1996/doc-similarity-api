@@ -8,6 +8,7 @@ import re
 
 #external dependencies
 import nltk
+from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 
 nltk.download('stopwords')
@@ -26,6 +27,12 @@ class TextPreprocessor:
         - remove whitespace
     '''
 
+    def __init__(self):
+        '''
+        constructor for TextPreprocessor
+        '''
+        self.stemmer = PorterStemmer()
+
     def get_cleaned_text(self, text: str) -> str:
         '''
         public facing method for cleaning text strings for NLP models
@@ -35,6 +42,7 @@ class TextPreprocessor:
         text = self._remove_digits(text)
         text = self._remove_stop_words(text)
         text = self._remove_whitespace(text)
+        text = self._lemmatize_text(text)
         return text
         
 
@@ -73,4 +81,10 @@ class TextPreprocessor:
         remove whitespace from text
         '''
         return ' '.join(text.split())
+    
 
+    def _lemmatize_text(self, text: str) -> str:
+        '''
+        lemmatize text
+        '''
+        return ' '.join([self.stemmer.stem(word) for word in text.split()])

@@ -59,6 +59,7 @@ class TestPreprocessorSuite:
         expected_cleaned_text = 'hello how are you'
         assert actual_cleaned_text == expected_cleaned_text
 
+
     def test_lemmatization(self) -> None:
         '''
         ensure lemmatization is working
