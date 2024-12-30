@@ -92,3 +92,19 @@ class TextPreprocessor:
         i.e. running -> run, ate -> eat
         '''
         return ' '.join([self.stemmer.stem(word) for word in text.split()])
+
+
+if __name__ == '__main__':
+    text_preprocessor = TextPreprocessor()
+    test_string = 'Hello my name is John'
+    print(text_preprocessor.get_cleaned_text(test_string))
+    test_string = 'hello, how are you?'
+    print(text_preprocessor.get_cleaned_text(test_string))
+    test_string = 'hello i am 20 years old and my name is nine9'
+    print(text_preprocessor.get_cleaned_text(test_string))
+    test_string = 'i am at the meeting call'
+    print(text_preprocessor.get_cleaned_text(test_string))
+    test_string = '  hello  how  are  you  '
+    print(text_preprocessor.get_cleaned_text(test_string))
+    test_string = 'running eating'
+    print(text_preprocessor.get_cleaned_text(test_string))
