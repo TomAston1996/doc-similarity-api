@@ -5,6 +5,7 @@ Author: Tom Aston
 #inbuild dependencies
 import string
 import re
+from functools import reduce
 
 #external dependencies
 import nltk
@@ -37,13 +38,15 @@ class TextPreprocessor:
         '''
         public facing method for cleaning text strings for NLP models
         '''
-        text = self._lowercase_text(text)
-        text = self._remove_punctuation(text)
-        text = self._remove_digits(text)
-        text = self._remove_stop_words(text)
-        text = self._remove_whitespace(text)
-        text = self._lemmatize_text(text)
-        return text
+        preprocess_steps = [
+            self._lowercase_text,
+            self._remove_punctuation,
+            self._remove_digits,
+            self._remove_stop_words,
+            self._remove_whitespace,
+            self._lemmatize_text
+        ]
+        return reduce(lambda t, step: step(t), preprocess_steps, text)
         
 
     def _lowercase_text(self, text: str) -> str:
