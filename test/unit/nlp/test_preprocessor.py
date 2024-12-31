@@ -69,3 +69,34 @@ class TestPreprocessorSuite:
         actual_cleaned_text = text_preprocessor._lemmatize_text(test_string)
         expected_cleaned_text = 'run eat'
         assert actual_cleaned_text == expected_cleaned_text
+
+
+    def test_get_cleaned_text(self) -> None:
+        '''
+        ensure all preprocessing steps are working
+        '''
+        text_preprocessor = TextPreprocessor()
+        test_string = 'Hello my name is John'
+        actual_cleaned_text = text_preprocessor.get_cleaned_text(test_string)
+        expected_cleaned_text = 'hello name john'
+        assert actual_cleaned_text == expected_cleaned_text
+        test_string = 'hello, how are you?'
+        actual_cleaned_text = text_preprocessor.get_cleaned_text(test_string)
+        expected_cleaned_text = 'hello'
+        assert actual_cleaned_text == expected_cleaned_text
+        test_string = 'hello i am 20 years old and my name is nine9'
+        actual_cleaned_text = text_preprocessor.get_cleaned_text(test_string)
+        expected_cleaned_text = 'hello year old name'
+        assert actual_cleaned_text == expected_cleaned_text
+        test_string = 'i am at the meeting call'
+        actual_cleaned_text = text_preprocessor.get_cleaned_text(test_string)
+        expected_cleaned_text = 'meet call'
+        assert actual_cleaned_text == expected_cleaned_text
+        test_string = '  hello  how  are  you  '
+        actual_cleaned_text = text_preprocessor.get_cleaned_text(test_string)
+        expected_cleaned_text = 'hello'
+        assert actual_cleaned_text == expected_cleaned_text
+        test_string = 'running eating'
+        actual_cleaned_text = text_preprocessor.get_cleaned_text(test_string)
+        expected_cleaned_text = 'run eat'
+        assert actual_cleaned_text == expected_cleaned_text
