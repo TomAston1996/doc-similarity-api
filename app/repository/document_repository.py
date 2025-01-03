@@ -9,7 +9,6 @@ from sqlalchemy.orm import Session
 
 #local dependencies
 from app.models.document import Document
-from app.core.database import database
 from app.schema.document_schema import DocumentCreateClientRequest, DocumentCreatedClientResponse
 
 
