@@ -30,3 +30,13 @@ class SimilarityCalculator:
         cleaned_text2 = self.preprocessor.get_cleaned_text(text2)
 
         return self._calculate_jaccard_similarity(cleaned_text1, cleaned_text2)
+    
+
+if __name__ == '__main__':
+    text1 = 'I am a cat'
+    text2 = 'I am a dog'
+
+    preprocessor = TextPreprocessor()
+    similarity_calculator = SimilarityCalculator(preprocessor)
+    similarity = similarity_calculator.calculate_similarity(text1, text2)
+    print(similarity)
