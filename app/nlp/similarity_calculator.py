@@ -46,5 +46,14 @@ if __name__ == '__main__':
 
     preprocessor = TextPreprocessor()
     similarity_calculator = SimilarityCalculator(preprocessor)
-    similarity = similarity_calculator.calculate_similarity(text1, text2)
-    print(similarity)
+    
+    
+    similarity1 = similarity_calculator.calculate_similarity(text1, text2)
+    
+    text3 = 'There was a fire in one of the electrical cupboards'
+    text4 = 'Electrical cabinet found smoking'
+
+    similarity2 = similarity_calculator.calculate_similarity(text3, text4)
+
+    print(similarity1)
+    print(similarity2)
