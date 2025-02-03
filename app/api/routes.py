@@ -1,16 +1,16 @@
-'''
+"""
 API Routes
 Author: Tom Aston
-'''
+"""
 
-#external dependencies
 from fastapi import APIRouter
 
-#local dependencies
-from app.api.routers.document_router import router as document_router
+from app.api.routers.document_router import document_router
 
 routers = APIRouter()
-router_list = [document_router]
 
-for router in router_list:
-    routers.include_router(router)
+VERSION = "0.1.0"
+
+routers.include_router(
+    document_router, prefix=f"/api/{VERSION}/document", tags=["document"]
+)

@@ -1,30 +1,50 @@
-'''
+"""
 Document Service Layer
 Author: Tom Aston
-'''
+"""
 
-#external dependencies
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException
 
-#local dependencies
-from app.schema.document_schema import DocumentCreateClientRequest, DocumentCreatedClientResponse, DocumentGetByIdClientResponse
-from app.repository import document_repository
+from app.repository.document_repository import DocumentRepository
+from app.schema.document_schema import (
+    DocumentCreateClientRequest,
+    DocumentCreatedClientResponse,
+    DocumentGetByIdClientResponse,
+)
+from app.models.document import Document
 
-
-async def get_by_id(id: int, db: Session) -> DocumentGetByIdClientResponse:
-    '''
-    service for getting a document by id number
-    '''
-    repository_response = await document_repository.get_by_id(id=id, db=db)
-
-    return DocumentGetByIdClientResponse(
-        id=repository_response.id,
-        title=repository_response.title
-    )
+document_repository = DocumentRepository()
 
 
-async def create_document(document_body: DocumentCreateClientRequest, db: Session) -> DocumentCreatedClientResponse:
-    '''
-    service for a creating document
-    '''
-    return await document_repository.create_document(document_body=document_body, db=db)
+class DocumentService:
+    """
+    document service class
+    """
+
+    async def get_by_id(
+        self, id: int, db: AsyncSession
+    ) -> DocumentGetByIdClientResponse:
+        """
+        service for getting a document by id number
+        """
+        repository_response: Document = await document_repository.get_by_id(
+            id=id, db=db
+        )
+
+        if not repository_response:
+            raise HTTPException(status_code=404, detail="Document not found")
+
+        return DocumentGetByIdClientResponse(
+            id=repository_response.id, title=repository_response.title
+        )
+
+    async def create_document(
+        self, document_body: DocumentCreateClientRequest, db: AsyncSession
+    ) -> DocumentCreatedClientResponse:
+        """
+        service for a creating document
+        """
+        return await document_repository.create_document(
+            document_body=document_body, db=db
+        )

@@ -3,15 +3,16 @@ Database
 Author: Tom Aston
 """
 
-# external dependencies
 from typing import Any, AsyncGenerator
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
-from sqlalchemy.orm import sessionmaker
 
-# local dependencies
 from app.core.config import config_manager
 
 
@@ -28,26 +29,32 @@ class BaseModel:
 
 class Database:
     """
-    Database class
+    database class
     """
 
     def __init__(self, db_url: str) -> None:
-        self.engine = AsyncEngine(
-            create_engine(
-                url=config_manager.DATABASE_URI,
-                echo=False,  # set to True to see the SQL queries in the console on fastapi
-            )
+        """
+        database constructor
+        """
+        self.engine: AsyncEngine = create_async_engine(
+            db_url,
+            echo=False,  # set to True to see the SQL queries in the console on fastapi
         )
 
-        self.session_local = sessionmaker(
-            autocommit=False, autoflush=False, bind=self.engine, expire_on_commit=False
+        self.session_local = async_sessionmaker(
+            autocommit=False,
+            autoflush=False,
+            bind=self.engine,
+            expire_on_commit=False,
+            class_=AsyncSession,
         )
 
-    def create_database(self) -> None:
+    async def create_database(self) -> None:
         """
         create all the database tables defined in models if they don't already exist
         """
-        BaseModel.metadata.create_all(bind=self.engine)
+        async with self.engine.begin() as conn:
+            await conn.run_sync(BaseModel.metadata.create_all)
 
     async def get_db(self) -> AsyncGenerator[AsyncSession, None]:
         """
@@ -57,7 +64,7 @@ class Database:
         try:
             yield db
         finally:
-            db.close()
+            await db.close()
 
 
 database = Database(config_manager.DATABASE_URI)
