@@ -28,7 +28,7 @@ class AppCreator:
         )
 
         #set routes
-        @self.app.get('/')
+        @self.app.get('/', tags=['root'])
         def root() -> str:
             return 'server is running'
 
