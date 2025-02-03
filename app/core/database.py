@@ -1,16 +1,19 @@
-'''
+"""
 Database
 Author: Tom Aston
-'''
+"""
 
-#external dependencies
+# external dependencies
+from typing import Any, AsyncGenerator
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.ext.declarative import declarative_base, declared_attr, as_declarative
-from typing import Any, Generator
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
+from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from sqlalchemy.orm import sessionmaker
 
-#local dependencies
+# local dependencies
 from app.core.config import config_manager
+
 
 @as_declarative()
 class BaseModel:
@@ -22,32 +25,39 @@ class BaseModel:
     def __tablename__(cls) -> str:
         return cls.__name__.lower()
 
+
 class Database:
-    '''
+    """
     Database class
-    '''
+    """
+
     def __init__(self, db_url: str) -> None:
-        self.engine = create_engine(db_url, echo=True)
+        self.engine = AsyncEngine(
+            create_engine(
+                url=config_manager.DATABASE_URI,
+                echo=False,  # set to True to see the SQL queries in the console on fastapi
+            )
+        )
+
         self.session_local = sessionmaker(
-            autocommit=False,
-            autoflush=False,
-            bind=self.engine
+            autocommit=False, autoflush=False, bind=self.engine, expire_on_commit=False
         )
 
     def create_database(self) -> None:
-        '''
+        """
         create all the database tables defined in models if they don't already exist
-        '''
+        """
         BaseModel.metadata.create_all(bind=self.engine)
 
-    def get_db(self) -> Generator[Session, Any, None]:
-        '''
+    async def get_db(self) -> AsyncGenerator[AsyncSession, None]:
+        """
         get database session
-        '''
-        db: Session = self.session_local()
+        """
+        db: AsyncSession = self.session_local()
         try:
             yield db
         finally:
             db.close()
+
 
 database = Database(config_manager.DATABASE_URI)

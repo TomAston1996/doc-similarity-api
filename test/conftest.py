@@ -2,18 +2,13 @@
 Test Config
 Author: Tom Aston
 '''
-#ibuilt dependencies
-import json
-import os
-
 #external dependencies
 import pytest
 from fastapi.testclient import TestClient
 
 #local dependencies
-from app.core.config import config_manager, ConfigManager
+from app.core.config import ConfigManager
 from app.main import AppCreator
-from app.models.document import Document
 
 @pytest.fixture
 def client():
