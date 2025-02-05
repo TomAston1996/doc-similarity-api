@@ -1,16 +1,17 @@
-'''
+"""
 Root Integration Test
 Author: Tom Aston
-'''
+"""
 
-#external dependencies
-from fastapi.testclient import TestClient
+import pytest
+from httpx import AsyncClient
 
 
-def test_client(client: TestClient):
-    '''
+@pytest.mark.asyncio
+async def test_client(client: AsyncClient, session):
+    """
     Test root
-    '''
-    response = client.get("/")
+    """
+    response = await client.get("/")
     assert response.status_code == 200
-    assert response.json() == 'server is running'
+    assert response.json() == "server is running"

@@ -32,8 +32,6 @@ class AppCreator:
 
         self.app.include_router(routers)
 
-def add(a, b):
-    return a + b
 
 app_creator = AppCreator()
 app = app_creator.app

@@ -16,7 +16,7 @@ class ConfigManager(BaseSettings):
     ConfigManager
     """
 
-    VERSION: str = "1.0.0"
+    VERSION: str = "0.1.0"
 
     PROJECT_NAME: str = "doc-similarity-api"
 

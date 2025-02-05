@@ -6,11 +6,10 @@ Author: Tom Aston
 from fastapi import APIRouter
 
 from app.api.routers.document_router import document_router
+from app.core.config import config_manager
 
 routers = APIRouter()
 
-VERSION = "0.1.0"
-
 routers.include_router(
-    document_router, prefix=f"/api/{VERSION}/document", tags=["document"]
+    document_router, prefix=f"/api/{config_manager.VERSION}/document", tags=["document"]
 )
