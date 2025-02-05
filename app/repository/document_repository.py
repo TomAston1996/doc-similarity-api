@@ -7,10 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
 
 from app.models.document import Document
-from app.schema.document_schema import (
-    DocumentCreateClientRequest,
-    DocumentCreatedClientResponse,
-)
+from app.schema.document_schema import DocumentCreateClientRequest
 
 
 class DocumentRepository:
@@ -28,7 +25,7 @@ class DocumentRepository:
 
     async def create_document(
         self, document_body: DocumentCreateClientRequest, db: AsyncSession
-    ) -> DocumentCreatedClientResponse:
+    ) -> Document:
         """
         create a new document
         """
@@ -36,11 +33,4 @@ class DocumentRepository:
         db.add(db_document)
         await db.commit()
         await db.refresh(db_document)  # Refresh to get auto-generated fields like 'id'
-
-        return DocumentCreatedClientResponse(
-            id=db_document.id,
-            title=db_document.title,
-            content=db_document.content,
-            description=db_document.description,
-            created=db_document.created,
-        )
+        return db_document

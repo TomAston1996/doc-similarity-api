@@ -14,7 +14,7 @@ class Document(BaseModel):
     document database model
     """
 
-    __tablename__ = "document"
+    __tablename__ = "document" # type: ignore
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)

@@ -37,3 +37,4 @@ class DocumentGetByIdClientResponse(BaseModel):
 
     id: int
     title: str
+    created: datetime
