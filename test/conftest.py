@@ -5,6 +5,7 @@ Author: Tom Aston
 
 import asyncio
 from typing import AsyncGenerator
+from unittest.mock import AsyncMock
 
 import pytest
 import pytest_asyncio
@@ -46,3 +47,12 @@ async def session():
 @pytest.fixture
 def config():
     return ConfigManager()
+
+
+@pytest.fixture
+def mock_db_session() -> AsyncMock:  # noqa: F811
+    mock_session = AsyncMock()
+    mock_session.add = AsyncMock()
+    mock_session.commit = AsyncMock()
+    mock_session.refresh = AsyncMock()
+    return mock_session

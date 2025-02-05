@@ -7,11 +7,16 @@ import pytest
 from httpx import AsyncClient
 
 
-@pytest.mark.asyncio
-async def test_client(client: AsyncClient, session):
+class TestRoot:
     """
-    Test root
+    Test Root
     """
-    response = await client.get("/")
-    assert response.status_code == 200
-    assert response.json() == "server is running"
+
+    @pytest.mark.asyncio
+    async def test_client(self, client: AsyncClient):
+        """
+        Test root
+        """
+        response = await client.get("/")
+        assert response.status_code == 200
+        assert response.json() == "server is running"
