@@ -4,6 +4,7 @@ Author: Tom Aston
 """
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -28,6 +29,16 @@ class DocumentCreatedClientResponse(BaseModel):
     content: str
     description: str
     created: datetime
+
+
+class DocumentUpdateClientRequest(BaseModel):
+    """
+    client request body for updating a document
+    """
+
+    title: Optional[str] = None
+    content: Optional[str] = None
+    description: Optional[str] = None
 
 
 class DocumentGetByIdClientResponse(BaseModel):
