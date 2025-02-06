@@ -4,8 +4,9 @@ Author: Tom Aston
 """
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException
 
+from app.errors import DocumentNotFoundException
+from app.models.document import Document
 from app.repository.document_repository import DocumentRepository
 from app.schema.document_schema import (
     DocumentCreateClientRequest,
@@ -13,7 +14,6 @@ from app.schema.document_schema import (
     DocumentGetByIdClientResponse,
     DocumentUpdateClientRequest,
 )
-from app.models.document import Document
 
 document_repository = DocumentRepository()
 
@@ -34,7 +34,7 @@ class DocumentService:
         )
 
         if not repository_response:
-            raise HTTPException(status_code=404, detail="Document not found")
+            raise DocumentNotFoundException()
 
         return DocumentGetByIdClientResponse(**repository_response.__dict__)
 
@@ -59,7 +59,7 @@ class DocumentService:
         )
 
         if not repository_response:
-            raise HTTPException(status_code=404, detail="No documents found")
+            raise DocumentNotFoundException()
 
         return [
             DocumentGetByIdClientResponse(**doc.__dict__) for doc in repository_response
@@ -76,7 +76,7 @@ class DocumentService:
         )
 
         if not db_document:
-            raise HTTPException(status_code=404, detail="Document not found")
+            raise DocumentNotFoundException()
 
         return DocumentCreatedClientResponse(**db_document.__dict__)
 
@@ -87,7 +87,7 @@ class DocumentService:
         db_document: Document | None = await document_repository.delete_document(id, db)
 
         if not db_document:
-            raise HTTPException(status_code=404, detail="Document not found")
+            raise DocumentNotFoundException()
 
         return f"Document [id: {db_document.id}, title: {db_document.title}] deleted successfully"
 
@@ -102,6 +102,6 @@ class DocumentService:
         )
 
         if not repository_response:
-            raise HTTPException(status_code=404, detail="Document not found")
+            raise DocumentNotFoundException()
 
         return DocumentGetByIdClientResponse(**repository_response.__dict__)
