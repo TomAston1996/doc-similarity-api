@@ -15,6 +15,7 @@ from fastapi import FastAPI
 from app.api.routes import routers
 from app.core.config import config_manager
 from app.errors import register_all_errors
+from app.middleware import register_middleware
 
 
 class AppCreator:
@@ -32,12 +33,15 @@ class AppCreator:
         @self.app.get("/", tags=["root"])
         def root() -> str:
             return "server is running"
-        
-        #register all routers
+
+        # register all routers
         self.app.include_router(routers)
-        
-        #register custom exceptions
+
+        # register custom exceptions
         register_all_errors(self.app)
+
+        # register middleware
+        register_middleware(self.app)
 
 
 app_creator = AppCreator()
