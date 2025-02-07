@@ -24,4 +24,4 @@ def register_middleware(app: FastAPI) -> None:
     # Add TrustedHostMiddleware
     # This middleware checks the Host header of the request against a list of allowed hosts.
     # * At the moment trusted hosts are set to just localhost
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1"])
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "test"])
