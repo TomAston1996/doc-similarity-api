@@ -21,3 +21,9 @@ class Document(BaseModel):
     content = Column(String, index=False)
     description = Column(String, index=False)
     created = Column(TIMESTAMP, server_default=func.now())
+
+    def __repr__(self) -> str:
+        """
+        dunder method to return a string representation of the document object
+        """
+        return f"Document(id={self.id}, title={self.title})"

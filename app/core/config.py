@@ -15,12 +15,13 @@ class ConfigManager(BaseSettings):
     """
     ConfigManager
     """
+
     # app config-----------------------------------------
     VERSION: str = "0.1.0"
     PROJECT_NAME: str = "doc-similarity-api"
-    PROJECT_DESCRIPTION: str = '''
+    PROJECT_DESCRIPTION: str = """
     A document similarity API that allows users to create and compare documents
-    '''
+    """
 
     PROJECT_ROOT: str = os.path.dirname(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -48,6 +49,10 @@ class ConfigManager(BaseSettings):
             database=POSTGRES_DB,
         )
     )
+
+    # security config-----------------------------------------
+    JWT_SECRET: str = os.environ["JWT_SECRET"]
+    JWT_ALGORITHM: str = os.environ["JWT_ALGORITHM"]
 
     class Config:
         case_sensitive = True
