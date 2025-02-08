@@ -55,6 +55,11 @@ class ConfigManager(BaseSettings):
     JWT_ALGORITHM: str = os.environ["JWT_ALGORITHM"]
     ACCESS_TOKEN_EXPIRY: int = 3600  # 1 hour
     REFRESH_TOKEN_EXPIRY: int = 3600 * 24 * 2 # 2 days
+    JTI_TOKEN_EXPIRY: int = 3600 # 1 hour
+
+    # redis config-----------------------------------------
+    REDIS_HOST: str = os.environ["REDIS_HOST"]
+    REDIS_PORT: int = int(os.environ["REDIS_HOST_PORT"])
 
     class Config:
         case_sensitive = True

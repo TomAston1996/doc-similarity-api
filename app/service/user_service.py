@@ -6,10 +6,12 @@ Author: Tom Aston
 import logging
 from datetime import datetime, timedelta
 
+from fastapi import status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import create_access_token, verify_password
+from app.core.cache import add_jti_to_blocklist
 from app.core.config import config_manager
 from app.errors import (
     InvalidCredentialsException,
@@ -26,7 +28,7 @@ from app.schema.user_schema import (
 )
 
 user_repository = UserRepository()
-logger = logging.getLogger('uvicorn')
+logger = logging.getLogger("uvicorn")
 
 
 class UserService:
@@ -129,4 +131,15 @@ class UserService:
         return JSONResponse(
             content={"message": "Token refreshed", "access_token": access_token},
             status_code=200,
+        )
+
+    async def logout_user(self, token: dict) -> JSONResponse:
+        """
+        service for logging out a user
+        """
+        # revokee the token jti
+        await add_jti_to_blocklist(token["jti"])
+
+        return JSONResponse(
+            content={"message": "Logout successful"}, status_code=status.HTTP_200_OK
         )

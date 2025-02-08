@@ -9,3 +9,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
     ports:
       - ${POSTGRES_HOST_PORT}:5432
+  cache:
+    image: 'redis:latest'
+    restart: 'always'
+    ports:
+      - ${REDIS_HOST_PORT}:6379

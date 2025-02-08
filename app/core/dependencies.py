@@ -11,6 +11,7 @@ from fastapi.security.http import HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import database
+from app.core.cache import is_jti_blacklisted
 from app.errors import (
     AccessTokenException,
     InvalidTokenException,
@@ -47,6 +48,9 @@ class TokenBearer(HTTPBearer):
             raise InvalidTokenException()
 
         token_data = decode_token(token)
+
+        if await is_jti_blacklisted(token_data["jti"]):
+            raise InvalidTokenException()
 
         self.verify_token_data(token_data)
 

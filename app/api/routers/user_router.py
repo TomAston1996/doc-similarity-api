@@ -2,6 +2,7 @@
 User Router
 Author: Tom Aston
 """
+
 import logging
 from typing import Annotated
 
@@ -10,7 +11,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import database
-from app.core.dependencies import RefreshTokenBearer
+from app.core.dependencies import RefreshTokenBearer, AccessTokenBearer
 from app.schema.user_schema import (
     UserClientResponse,
     UserCreateClientRequest,
@@ -20,7 +21,8 @@ from app.service.user_service import UserService
 
 user_router = APIRouter()
 user_service = UserService()
-logger = logging.getLogger('uvicorn')
+logger = logging.getLogger("uvicorn")
+
 
 @user_router.post(
     "/signup", response_model=UserClientResponse, status_code=status.HTTP_201_CREATED
@@ -80,3 +82,13 @@ async def get_new_access_token(
     GET refresh token endpoint
     """
     return await user_service.refresh_token(token)
+
+
+@user_router.get("/logout", status_code=status.HTTP_200_OK)
+async def logout_user(
+    token: Annotated[dict, Depends(AccessTokenBearer())],
+) -> JSONResponse:
+    """
+    GET logout user endpoint
+    """
+    return await user_service.logout_user(token)
