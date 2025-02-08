@@ -3,12 +3,25 @@ User Service
 Author: Tom Aston
 """
 
+from datetime import timedelta
+
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth import create_access_token, verify_password
+from app.core.config import config_manager
+from app.errors import (
+    InvalidCredentialsException,
+    UserAlreadyExistsException,
+    UserNotFoundException,
+)
 from app.models.user import User
 from app.repository.user_repository import UserRepository
-from app.schema.user_schema import UserClientResponse, UserCreateClientRequest
-from app.errors import UserNotFoundException, UserAlreadyExistsException
+from app.schema.user_schema import (
+    UserClientResponse,
+    UserCreateClientRequest,
+    UserLoginRequest,
+)
 
 user_repository = UserRepository()
 
@@ -58,3 +71,44 @@ class UserService:
             return []
 
         return repository_response
+
+    async def login_user(
+        self, user_login_data: UserLoginRequest, db: AsyncSession
+    ) -> JSONResponse:
+        """
+        service for logging in a user
+        """
+        user: User = await user_repository.get_by_email(user_login_data.email, db)
+
+        # 1. Check if user exists
+        if not user:
+            raise InvalidCredentialsException()
+
+        # 2. Check if password is correct
+        if not verify_password(user_login_data.password, user.password_hash):
+            raise InvalidCredentialsException()
+
+        user_data = {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email
+        }
+
+        # 3. Create access token
+        access_token = create_access_token(user_data=user_data)
+
+        # 4. Create refresh token
+        refresh_token = create_access_token(
+            user_data=user_data,
+            refresh=True,
+            expiry=timedelta(seconds=config_manager.REFRESH_TOKEN_EXPIRY),
+        )
+
+        return JSONResponse(
+            content={
+                "message": "Login successful",
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "user": user_data,
+            }
+        )

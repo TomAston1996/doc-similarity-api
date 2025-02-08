@@ -53,6 +53,8 @@ class ConfigManager(BaseSettings):
     # security config-----------------------------------------
     JWT_SECRET: str = os.environ["JWT_SECRET"]
     JWT_ALGORITHM: str = os.environ["JWT_ALGORITHM"]
+    ACCESS_TOKEN_EXPIRY: int = 3600  # 1 hour
+    REFRESH_TOKEN_EXPIRY: int = 3600 * 24 * 2 # 2 days
 
     class Config:
         case_sensitive = True

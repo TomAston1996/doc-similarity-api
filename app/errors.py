@@ -42,6 +42,36 @@ class UserAlreadyExistsException(AppException):
     pass
 
 
+class InvalidCredentialsException(AppException):
+    """
+    Raised when the user provides invalid credentials
+    """
+
+    pass
+
+class InvalidTokenException(AppException):
+    """
+    Raised when the user provides an invalid token
+    """
+
+    pass
+
+class AccessTokenException(AppException):
+    """
+    Raised when the user provides an invalid access token
+    """
+
+    pass
+
+
+class RefreshTokenException(AppException):
+    """
+    Raised when the user provides an invalid refresh token
+    """
+
+    pass
+
+
 def create_exception_hander(
     status_code: int, detail: Any
 ) -> Callable[[Request, Exception], JSONResponse]:
@@ -81,5 +111,29 @@ def register_all_errors(app: FastAPI) -> None:
         UserAlreadyExistsException,
         create_exception_hander(
             status.HTTP_409_CONFLICT, "User email or username already exists"
+        ),
+    )
+    app.add_exception_handler(
+        InvalidCredentialsException,
+        create_exception_hander(
+            status.HTTP_401_UNAUTHORIZED, "Password or email is invalid"
+        ),
+    )
+    app.add_exception_handler(
+        InvalidTokenException,
+        create_exception_hander(
+            status.HTTP_401_UNAUTHORIZED, "Invalid token"
+        ),
+    )
+    app.add_exception_handler(
+        AccessTokenException,
+        create_exception_hander(
+            status.HTTP_401_UNAUTHORIZED, "Access token is invalid"
+        ),
+    )
+    app.add_exception_handler(
+        RefreshTokenException,
+        create_exception_hander(
+            status.HTTP_401_UNAUTHORIZED, "Refresh token is invalid"
         ),
     )

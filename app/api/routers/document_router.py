@@ -17,9 +17,12 @@ from app.schema.document_schema import (
     DocumentUpdateClientRequest,
 )
 from app.service.document_service import DocumentService
+from app.core.dependencies import AccessTokenBearer
 
 document_router = APIRouter()
 document_service = DocumentService()
+
+access_token_bearer = AccessTokenBearer()
 
 
 @document_router.get(
@@ -29,6 +32,7 @@ document_service = DocumentService()
 )
 async def get_all_documents(
     db: Annotated[AsyncSession, Depends(database.get_db)],
+    token: Annotated[dict, Depends(access_token_bearer)],
 ) -> list[DocumentGetByIdClientResponse]:
     """
     GET all documents endpoint
@@ -42,7 +46,9 @@ async def get_all_documents(
     status_code=status.HTTP_200_OK,
 )
 async def get_document_by_id(
-    id: int, db: Annotated[AsyncSession, Depends(database.get_db)]
+    id: int,
+    db: Annotated[AsyncSession, Depends(database.get_db)],
+    token: Annotated[dict, Depends(access_token_bearer)],
 ) -> DocumentGetByIdClientResponse:
     """
     GET a document by id number endpoint
@@ -56,7 +62,9 @@ async def get_document_by_id(
     status_code=status.HTTP_200_OK,
 )
 async def get_document_by_title(
-    title: str, db: Annotated[AsyncSession, Depends(database.get_db)]
+    title: str,
+    db: Annotated[AsyncSession, Depends(database.get_db)],
+    token: Annotated[dict, Depends(access_token_bearer)],
 ) -> DocumentGetByIdClientResponse:
     """
     GET a document by title
@@ -72,6 +80,7 @@ async def get_document_by_title(
 async def create_document(
     document_body: DocumentCreateClientRequest,
     db: Annotated[AsyncSession, Depends(database.get_db)],
+    token: Annotated[dict, Depends(access_token_bearer)],
 ) -> DocumentCreatedClientResponse:
     """
     CREATE a new document endpoint
@@ -88,6 +97,7 @@ async def update_document(
     id: int,
     document_body: DocumentUpdateClientRequest,
     db: Annotated[AsyncSession, Depends(database.get_db)],
+    token: Annotated[dict, Depends(access_token_bearer)],
 ) -> DocumentCreatedClientResponse:
     """
     UPDATE a document by id endpoint
@@ -99,7 +109,9 @@ async def update_document(
 
 @document_router.delete("/{id}", status_code=status.HTTP_200_OK)
 async def delete_document(
-    id: int, db: Annotated[AsyncSession, Depends(database.get_db)]
+    id: int,
+    db: Annotated[AsyncSession, Depends(database.get_db)],
+    token: Annotated[dict, Depends(access_token_bearer)],
 ) -> JSONResponse:
     """
     DELETE a document by id endpoint

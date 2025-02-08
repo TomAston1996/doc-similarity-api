@@ -27,6 +27,9 @@ def generate_password_hash(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     Verify a password hash
+
+    Returns:
+        True if the password is correct, False otherwise
     """
     return password_context.verify(plain_password, hashed_password)
 

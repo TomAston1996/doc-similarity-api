@@ -29,3 +29,12 @@ class UserClientResponse(BaseModel):
     role: str
     created: datetime
     updated: datetime
+
+
+class UserLoginRequest(BaseModel):
+    """
+    client request body for logging in a user
+    """
+
+    email: str
+    password: str
