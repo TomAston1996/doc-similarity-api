@@ -3,7 +3,8 @@ User Service
 Author: Tom Aston
 """
 
-from datetime import timedelta
+import logging
+from datetime import datetime, timedelta
 
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,6 +13,7 @@ from app.core.auth import create_access_token, verify_password
 from app.core.config import config_manager
 from app.errors import (
     InvalidCredentialsException,
+    InvalidTokenException,
     UserAlreadyExistsException,
     UserNotFoundException,
 )
@@ -24,6 +26,7 @@ from app.schema.user_schema import (
 )
 
 user_repository = UserRepository()
+logger = logging.getLogger('uvicorn')
 
 
 class UserService:
@@ -88,11 +91,7 @@ class UserService:
         if not verify_password(user_login_data.password, user.password_hash):
             raise InvalidCredentialsException()
 
-        user_data = {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email
-        }
+        user_data = {"id": user.id, "username": user.username, "email": user.email}
 
         # 3. Create access token
         access_token = create_access_token(user_data=user_data)
@@ -111,4 +110,23 @@ class UserService:
                 "refresh_token": refresh_token,
                 "user": user_data,
             }
+        )
+
+    async def refresh_token(self, token: dict) -> JSONResponse:
+        """
+        service for refreshing a token
+        """
+        expiry_timestamp = token.get("exp")
+        expiry_datetime = datetime.fromtimestamp(expiry_timestamp)
+
+        # 1. Check if token is expired
+        if expiry_datetime < datetime.now():
+            raise InvalidTokenException()
+
+        # 2. Create new access token
+        access_token = create_access_token(user_data=token["user"])
+
+        return JSONResponse(
+            content={"message": "Token refreshed", "access_token": access_token},
+            status_code=200,
         )

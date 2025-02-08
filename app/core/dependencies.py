@@ -3,6 +3,8 @@ Dependencies for the FastAPI app
 Author: Tom Aston
 """
 
+import logging
+
 from fastapi import Depends, Request
 from fastapi.security import HTTPBearer
 from fastapi.security.http import HTTPAuthorizationCredentials
@@ -19,7 +21,7 @@ from app.service.user_service import UserService
 from .auth import decode_token
 
 user_service = UserService()
-
+logger = logging.getLogger('uvicorn')
 
 class TokenBearer(HTTPBearer):
     """
