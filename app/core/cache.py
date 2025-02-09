@@ -42,6 +42,7 @@ async def is_jti_blacklisted(jti: str) -> bool:
     """
     return await jti_blocklist.get(jti) is not None
 
+
 async def add_docs_to_cache(key: str, value: str) -> None:
     """
     Add docs to cache
@@ -51,6 +52,7 @@ async def add_docs_to_cache(key: str, value: str) -> None:
     - value: str: value to store in the cache
     """
     await docs_cache.set(name=key, value=value, ex=config_manager.DOCS_CACHE_EXPIRY)
+
 
 async def is_docs_in_cache(key: str) -> bool:
     """
@@ -63,6 +65,7 @@ async def is_docs_in_cache(key: str) -> bool:
     - bool: True if docs are in cache, False otherwise
     """
     return await docs_cache.exists(key)
+
 
 async def get_docs_from_cache(key: str) -> str:
     """
