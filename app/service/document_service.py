@@ -3,8 +3,12 @@ Document Service Layer
 Author: Tom Aston
 """
 
+import json
+from datetime import datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cache import add_docs_to_cache, get_docs_from_cache, is_docs_in_cache
 from app.errors import DocumentNotFoundException
 from app.models.document import Document
 from app.repository.document_repository import DocumentRepository
@@ -54,12 +58,25 @@ class DocumentService:
         """
         service for getting all documents
         """
+        # if the docs are in the cache, return them
+        if await is_docs_in_cache("all_docs"):
+            json_response = await get_docs_from_cache("all_docs")
+            return json.loads(
+                json_response, object_hook=lambda d: DocumentGetByIdClientResponse(**d)
+            )
+
         repository_response: list[Document] | None = await document_repository.get_all(
             db
         )
 
         if not repository_response:
             raise DocumentNotFoundException()
+
+        # add the docs to the cache
+        await add_docs_to_cache(
+            "all_docs",
+            json.dumps([self.__serialize_document(doc) for doc in repository_response]),
+        )
 
         return [
             DocumentGetByIdClientResponse(**doc.__dict__) for doc in repository_response
@@ -105,3 +122,17 @@ class DocumentService:
             raise DocumentNotFoundException()
 
         return DocumentGetByIdClientResponse(**repository_response.__dict__)
+
+    def __serialize_document(self, obj: Document) -> dict:
+        """
+        Convert SQLAlchemy objects to JSON-serializable dictionaries.
+        """
+        serialized = {}
+        for key, value in obj.__dict__.items():
+            if key == "_sa_instance_state":  # Skip SQLAlchemy instance state
+                continue
+            if isinstance(value, datetime):
+                serialized[key] = value.isoformat()  # Convert datetime to string
+            else:
+                serialized[key] = value
+        return serialized
