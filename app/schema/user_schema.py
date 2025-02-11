@@ -4,8 +4,11 @@ Author: Tom Aston
 """
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, Field
+
+from app.models.user import UserRole
 
 
 class UserCreateClientRequest(BaseModel):
@@ -16,6 +19,7 @@ class UserCreateClientRequest(BaseModel):
     username: str = Field(max_length=50)
     email: str = Field(max_length=100)
     password: str = Field(min_length=5, max_length=100)
+    role: Optional[UserRole] = Field(default=UserRole.USER)
 
 
 class UserClientResponse(BaseModel):

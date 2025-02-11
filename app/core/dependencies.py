@@ -10,19 +10,22 @@ from fastapi.security import HTTPBearer
 from fastapi.security.http import HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import database
 from app.core.cache import is_jti_blacklisted
+from app.core.database import database
 from app.errors import (
     AccessTokenException,
+    InsufficientPermissionsException,
     InvalidTokenException,
     RefreshTokenException,
 )
+from app.models.user import User, UserRole
 from app.service.user_service import UserService
 
 from .auth import decode_token
 
 user_service = UserService()
-logger = logging.getLogger('uvicorn')
+logger = logging.getLogger("uvicorn")
+
 
 class TokenBearer(HTTPBearer):
     """
@@ -125,7 +128,7 @@ class RefreshTokenBearer(TokenBearer):
 async def get_current_user(
     token: dict = Depends(AccessTokenBearer()),
     db: AsyncSession = Depends(database.get_db),
-) -> dict:
+) -> User:
     """
     Get the current user
 
@@ -138,3 +141,27 @@ async def get_current_user(
     user_email = token["user"]["email"]
     user = await user_service.get_by_email(email=user_email, db=db)
     return user
+
+
+class RoleChecker:
+    """
+    Role checker class
+    """
+
+    def __init__(self, allowed_roles: list[str]) -> None:
+        """
+        Initialize the class with a list of roles
+        """
+        self.allowed_roles = allowed_roles
+
+    async def __call__(self, user: User = Depends(get_current_user)) -> bool:
+        """
+        Override the __call__ method
+        """
+        user_role: UserRole = user.role
+
+        # check if the current user role is in the allowed roles, if not raise a 403 Forbidden error
+        if user_role.value not in self.allowed_roles:
+            raise InsufficientPermissionsException()
+
+        return True

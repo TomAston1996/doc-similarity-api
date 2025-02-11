@@ -49,12 +49,14 @@ class InvalidCredentialsException(AppException):
 
     pass
 
+
 class InvalidTokenException(AppException):
     """
     Raised when the user provides an invalid token
     """
 
     pass
+
 
 class AccessTokenException(AppException):
     """
@@ -67,6 +69,14 @@ class AccessTokenException(AppException):
 class RefreshTokenException(AppException):
     """
     Raised when the user provides an invalid refresh token
+    """
+
+    pass
+
+
+class InsufficientPermissionsException(AppException):
+    """
+    Raised when the user does not have sufficient permissions
     """
 
     pass
@@ -121,9 +131,7 @@ def register_all_errors(app: FastAPI) -> None:
     )
     app.add_exception_handler(
         InvalidTokenException,
-        create_exception_hander(
-            status.HTTP_401_UNAUTHORIZED, "Invalid token"
-        ),
+        create_exception_hander(status.HTTP_401_UNAUTHORIZED, "Invalid token"),
     )
     app.add_exception_handler(
         AccessTokenException,
@@ -136,4 +144,8 @@ def register_all_errors(app: FastAPI) -> None:
         create_exception_hander(
             status.HTTP_401_UNAUTHORIZED, "Refresh token is invalid"
         ),
+    )
+    app.add_exception_handler(
+        InsufficientPermissionsException,
+        create_exception_hander(status.HTTP_403_FORBIDDEN, "Insufficient permissions"),
     )

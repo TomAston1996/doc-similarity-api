@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import database
+from app.core.dependencies import AccessTokenBearer, RoleChecker
 from app.schema.document_schema import (
     DocumentCreateClientRequest,
     DocumentCreatedClientResponse,
@@ -17,12 +18,13 @@ from app.schema.document_schema import (
     DocumentUpdateClientRequest,
 )
 from app.service.document_service import DocumentService
-from app.core.dependencies import AccessTokenBearer
 
 document_router = APIRouter()
 document_service = DocumentService()
 
 access_token_bearer = AccessTokenBearer()
+user_role_checker = RoleChecker(["admin", "user"])
+admin_role_checker = RoleChecker(["admin"])
 
 
 @document_router.get(
@@ -33,6 +35,7 @@ access_token_bearer = AccessTokenBearer()
 async def get_all_documents(
     db: Annotated[AsyncSession, Depends(database.get_db)],
     token: Annotated[dict, Depends(access_token_bearer)],
+    _: Annotated[bool, Depends(admin_role_checker)],
 ) -> list[DocumentGetByIdClientResponse]:
     """
     GET all documents endpoint
@@ -49,6 +52,7 @@ async def get_document_by_id(
     id: int,
     db: Annotated[AsyncSession, Depends(database.get_db)],
     token: Annotated[dict, Depends(access_token_bearer)],
+    _: Annotated[bool, Depends(user_role_checker)],
 ) -> DocumentGetByIdClientResponse:
     """
     GET a document by id number endpoint
@@ -65,6 +69,7 @@ async def get_document_by_title(
     title: str,
     db: Annotated[AsyncSession, Depends(database.get_db)],
     token: Annotated[dict, Depends(access_token_bearer)],
+    _: Annotated[bool, Depends(user_role_checker)],
 ) -> DocumentGetByIdClientResponse:
     """
     GET a document by title
@@ -81,6 +86,7 @@ async def create_document(
     document_body: DocumentCreateClientRequest,
     db: Annotated[AsyncSession, Depends(database.get_db)],
     token: Annotated[dict, Depends(access_token_bearer)],
+    _: Annotated[bool, Depends(user_role_checker)],
 ) -> DocumentCreatedClientResponse:
     """
     CREATE a new document endpoint
@@ -98,6 +104,7 @@ async def update_document(
     document_body: DocumentUpdateClientRequest,
     db: Annotated[AsyncSession, Depends(database.get_db)],
     token: Annotated[dict, Depends(access_token_bearer)],
+    _: Annotated[bool, Depends(admin_role_checker)],
 ) -> DocumentCreatedClientResponse:
     """
     UPDATE a document by id endpoint
@@ -112,6 +119,7 @@ async def delete_document(
     id: int,
     db: Annotated[AsyncSession, Depends(database.get_db)],
     token: Annotated[dict, Depends(access_token_bearer)],
+    _: Annotated[bool, Depends(user_role_checker)],
 ) -> JSONResponse:
     """
     DELETE a document by id endpoint
