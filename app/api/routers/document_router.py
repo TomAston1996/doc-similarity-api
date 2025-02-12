@@ -11,11 +11,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import database
 from app.core.dependencies import AccessTokenBearer, RoleChecker
+from app.core.pagination import Pagination, pagination_params
 from app.schema.document_schema import (
     DocumentCreateClientRequest,
     DocumentCreatedClientResponse,
     DocumentGetByIdClientResponse,
     DocumentUpdateClientRequest,
+    PaginationClientResponse,
 )
 from app.service.document_service import DocumentService
 
@@ -41,6 +43,23 @@ async def get_all_documents(
     GET all documents endpoint
     """
     return await document_service.get_all(db=db)
+
+
+@document_router.get(
+    "/paginated",
+    response_model=PaginationClientResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_all_documents_paginated(
+    db: Annotated[AsyncSession, Depends(database.get_db)],
+    token: Annotated[dict, Depends(access_token_bearer)],
+    _: Annotated[bool, Depends(admin_role_checker)],
+    pagination: Annotated[Pagination, Depends(pagination_params)],
+) -> PaginationClientResponse:
+    """
+    GET all documents paginated endpoint
+    """
+    return await document_service.get_all_paginated(db=db, pagination=pagination)
 
 
 @document_router.get(

@@ -9,6 +9,7 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.cache import add_docs_to_cache, get_docs_from_cache, is_docs_in_cache
+from app.core.pagination import Pagination
 from app.errors import DocumentNotFoundException
 from app.models.document import Document
 from app.repository.document_repository import DocumentRepository
@@ -17,6 +18,7 @@ from app.schema.document_schema import (
     DocumentCreatedClientResponse,
     DocumentGetByIdClientResponse,
     DocumentUpdateClientRequest,
+    PaginationClientResponse,
 )
 
 document_repository = DocumentRepository()
@@ -81,6 +83,23 @@ class DocumentService:
         return [
             DocumentGetByIdClientResponse(**doc.__dict__) for doc in repository_response
         ]
+
+    async def get_all_paginated(
+        self, db: AsyncSession, pagination: Pagination
+    ) -> PaginationClientResponse:
+        """
+        service for getting all documents paginated
+        """
+
+        documents, pages = await document_repository.get_all_paginated(db, pagination)
+
+        if not documents:
+            raise DocumentNotFoundException()
+
+        return PaginationClientResponse(
+            pages=pages,
+            items=[DocumentCreatedClientResponse(**doc.__dict__) for doc in documents],
+        )
 
     async def update_document(
         self, id: int, document_body: DocumentUpdateClientRequest, db: AsyncSession

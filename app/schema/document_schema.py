@@ -31,6 +31,15 @@ class DocumentCreatedClientResponse(BaseModel):
     created: datetime
 
 
+class PaginationClientResponse(BaseModel):
+    """
+    client response for pagination
+    """
+
+    pages: int
+    items: list[DocumentCreatedClientResponse]
+
+
 class DocumentUpdateClientRequest(BaseModel):
     """
     client request body for updating a document
