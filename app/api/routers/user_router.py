@@ -24,9 +24,7 @@ user_service = UserService()
 logger = logging.getLogger("uvicorn")
 
 
-@user_router.post(
-    "/signup", response_model=UserClientResponse, status_code=status.HTTP_201_CREATED
-)
+@user_router.post("/signup", response_model=UserClientResponse, status_code=status.HTTP_201_CREATED)
 async def signup_user(
     user_create_request: UserCreateClientRequest,
     db: Annotated[AsyncSession, Depends(database.get_db)],
@@ -34,26 +32,18 @@ async def signup_user(
     """
     POST signup user endpoint
     """
-    return await user_service.create_user(
-        user_create_request=user_create_request, db=db
-    )
+    return await user_service.create_user(user_create_request=user_create_request, db=db)
 
 
-@user_router.get(
-    "/email/{email}", response_model=UserClientResponse, status_code=status.HTTP_200_OK
-)
-async def get_user_by_email(
-    email: str, db: Annotated[AsyncSession, Depends(database.get_db)]
-) -> UserClientResponse:
+@user_router.get("/email/{email}", response_model=UserClientResponse, status_code=status.HTTP_200_OK)
+async def get_user_by_email(email: str, db: Annotated[AsyncSession, Depends(database.get_db)]) -> UserClientResponse:
     """
     GET a user by email endpoint
     """
     return await user_service.get_by_email(email=email, db=db)
 
 
-@user_router.get(
-    "/", response_model=list[UserClientResponse], status_code=status.HTTP_200_OK
-)
+@user_router.get("/", response_model=list[UserClientResponse], status_code=status.HTTP_200_OK)
 async def get_all_users(
     db: Annotated[AsyncSession, Depends(database.get_db)],
 ) -> list[UserClientResponse]:

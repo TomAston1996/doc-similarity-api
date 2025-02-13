@@ -12,6 +12,7 @@ from app.core.cache import add_docs_to_cache, get_docs_from_cache, is_docs_in_ca
 from app.core.pagination import Pagination
 from app.errors import DocumentNotFoundException
 from app.models.document import Document
+from app.models.user import User
 from app.repository.document_repository import DocumentRepository
 from app.schema.document_schema import (
     DocumentCreateClientRequest,
@@ -29,15 +30,11 @@ class DocumentService:
     document service class
     """
 
-    async def get_by_id(
-        self, id: int, db: AsyncSession
-    ) -> DocumentGetByIdClientResponse:
+    async def get_by_id(self, id: int, db: AsyncSession) -> DocumentGetByIdClientResponse:
         """
         service for getting a document by id number
         """
-        repository_response: Document | None = await document_repository.get_by_id(
-            id, db
-        )
+        repository_response: Document | None = await document_repository.get_by_id(id, db)
 
         if not repository_response:
             raise DocumentNotFoundException()
@@ -45,14 +42,12 @@ class DocumentService:
         return DocumentGetByIdClientResponse(**repository_response.__dict__)
 
     async def create_document(
-        self, document_body: DocumentCreateClientRequest, db: AsyncSession
+        self, document_body: DocumentCreateClientRequest, db: AsyncSession, user: User
     ) -> DocumentCreatedClientResponse:
         """
         service for a creating document
         """
-        db_document: Document = await document_repository.create_document(
-            document_body=document_body, db=db
-        )
+        db_document: Document = await document_repository.create_document(document_body=document_body, db=db, user=user)
 
         return DocumentCreatedClientResponse(**db_document.__dict__)
 
@@ -63,13 +58,9 @@ class DocumentService:
         # if the docs are in the cache, return them
         if await is_docs_in_cache("all_docs"):
             json_response = await get_docs_from_cache("all_docs")
-            return json.loads(
-                json_response, object_hook=lambda d: DocumentGetByIdClientResponse(**d)
-            )
+            return json.loads(json_response, object_hook=lambda d: DocumentGetByIdClientResponse(**d))
 
-        repository_response: list[Document] | None = await document_repository.get_all(
-            db
-        )
+        repository_response: list[Document] | None = await document_repository.get_all(db)
 
         if not repository_response:
             raise DocumentNotFoundException()
@@ -80,13 +71,9 @@ class DocumentService:
             json.dumps([self.__serialize_document(doc) for doc in repository_response]),
         )
 
-        return [
-            DocumentGetByIdClientResponse(**doc.__dict__) for doc in repository_response
-        ]
+        return [DocumentGetByIdClientResponse(**doc.__dict__) for doc in repository_response]
 
-    async def get_all_paginated(
-        self, db: AsyncSession, pagination: Pagination
-    ) -> PaginationClientResponse:
+    async def get_all_paginated(self, db: AsyncSession, pagination: Pagination) -> PaginationClientResponse:
         """
         service for getting all documents paginated
         """
@@ -127,15 +114,11 @@ class DocumentService:
 
         return f"Document [id: {db_document.id}, title: {db_document.title}] deleted successfully"
 
-    async def get_by_title(
-        self, title: str, db: AsyncSession
-    ) -> DocumentGetByIdClientResponse:
+    async def get_by_title(self, title: str, db: AsyncSession) -> DocumentGetByIdClientResponse:
         """
         service for getting a document by title
         """
-        repository_response: Document | None = await document_repository.get_by_title(
-            title, db
-        )
+        repository_response: Document | None = await document_repository.get_by_title(title, db)
 
         if not repository_response:
             raise DocumentNotFoundException()

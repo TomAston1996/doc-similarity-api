@@ -9,6 +9,7 @@ from sqlalchemy.sql import select
 
 from app.core.pagination import Pagination, SortEnum
 from app.models.document import Document
+from app.models.user import User
 from app.schema.document_schema import (
     DocumentCreateClientRequest,
     DocumentUpdateClientRequest,
@@ -28,9 +29,7 @@ class DocumentRepository:
         result = await db.execute(statement)
         return result.scalars().all()
 
-    async def get_all_paginated(
-        self, db: AsyncSession, pagination: Pagination
-    ) -> tuple[list[Document], int] | None:
+    async def get_all_paginated(self, db: AsyncSession, pagination: Pagination) -> tuple[list[Document], int] | None:
         """
         get all documents paginated
 
@@ -42,17 +41,11 @@ class DocumentRepository:
         statement = (
             select(Document)
             .limit(pagination.perPage)
-            .offset(
-                pagination.page - 1
-                if pagination.page == 1
-                else (pagination.page - 1) * pagination.perPage
-            )
+            .offset(pagination.page - 1 if pagination.page == 1 else (pagination.page - 1) * pagination.perPage)
             .order_by(order(Document.id))
         )
         result = await db.execute(statement)
-        count_result = await db.execute(
-            select(func.count()).select_from(select(Document.id).subquery())
-        )
+        count_result = await db.execute(select(func.count()).select_from(select(Document.id).subquery()))
         count = count_result.scalar_one()
         return (result.scalars().all(), count)
 
@@ -96,12 +89,14 @@ class DocumentRepository:
         return db_document
 
     async def create_document(
-        self, document_body: DocumentCreateClientRequest, db: AsyncSession
+        self, document_body: DocumentCreateClientRequest, db: AsyncSession, user: User
     ) -> Document:
         """
         create a new document
         """
-        db_document = Document(**document_body.model_dump())
+        document_dict = document_body.model_dump()
+        document_dict["user_id"] = user.id
+        db_document = Document(**document_dict)
         db.add(db_document)
         await db.commit()
         await db.refresh(db_document)  # Refresh to get auto-generated fields like 'id'

@@ -24,17 +24,13 @@ def register_middleware(app: FastAPI) -> None:
 
     # Add custom logging middleware
     @app.middleware("http")
-    async def custom_logging(
-        request: Request, call_next: Callable[[Request], Response]
-    ) -> Response:
+    async def custom_logging(request: Request, call_next: Callable[[Request], Response]) -> Response:
         """
         Custom logging middleware
         """
         start_time = time.time()  # start time
 
-        response: Response = await call_next(
-            request
-        )  # call the next middleware or route handler
+        response: Response = await call_next(request)  # call the next middleware or route handler
 
         process_time = time.time() - start_time
 
@@ -56,6 +52,4 @@ def register_middleware(app: FastAPI) -> None:
     # Add TrustedHostMiddleware
     # This middleware checks the Host header of the request against a list of allowed hosts.
     # * At the moment trusted hosts are set to just localhost
-    app.add_middleware(
-        TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "test"]
-    )
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1", "test"])

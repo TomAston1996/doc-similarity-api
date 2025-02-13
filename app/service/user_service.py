@@ -47,9 +47,7 @@ class UserService:
 
         return repository_response
 
-    async def create_user(
-        self, user_create_request: UserCreateClientRequest, db: AsyncSession
-    ) -> UserClientResponse:
+    async def create_user(self, user_create_request: UserCreateClientRequest, db: AsyncSession) -> UserClientResponse:
         """
         service for creating a user
         """
@@ -77,9 +75,7 @@ class UserService:
 
         return repository_response
 
-    async def login_user(
-        self, user_login_data: UserLoginRequest, db: AsyncSession
-    ) -> JSONResponse:
+    async def login_user(self, user_login_data: UserLoginRequest, db: AsyncSession) -> JSONResponse:
         """
         service for logging in a user
         """
@@ -140,6 +136,4 @@ class UserService:
         # revokee the token jti
         await add_jti_to_blocklist(token["jti"])
 
-        return JSONResponse(
-            content={"message": "Logout successful"}, status_code=status.HTTP_200_OK
-        )
+        return JSONResponse(content={"message": "Logout successful"}, status_code=status.HTTP_200_OK)

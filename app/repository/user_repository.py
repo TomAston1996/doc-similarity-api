@@ -47,9 +47,7 @@ class UserRepository:
         user = self.get_by_email(email, db)
         return user is not None
 
-    async def create_user(
-        self, user_create_request: UserCreateClientRequest, db: AsyncSession
-    ) -> User:
+    async def create_user(self, user_create_request: UserCreateClientRequest, db: AsyncSession) -> User:
         """
         create a user
         """

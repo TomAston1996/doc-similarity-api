@@ -34,9 +34,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return password_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(
-    user_data: dict, expiry: timedelta = None, refresh: bool = False
-) -> str:
+def create_access_token(user_data: dict, expiry: timedelta = None, refresh: bool = False) -> str:
     """
     Create an access token
 
@@ -49,11 +47,7 @@ def create_access_token(
     payload = {}
 
     payload["user"] = user_data
-    payload["exp"] = (
-        datetime.now() + expiry
-        if expiry
-        else datetime.now() + timedelta(seconds=ACCESS_TOKEN_EXPIRY)
-    )
+    payload["exp"] = datetime.now() + expiry if expiry else datetime.now() + timedelta(seconds=ACCESS_TOKEN_EXPIRY)
     payload["jti"] = str(uuid.uuid4())  # unique identifier for the token
     payload["refresh"] = refresh  # flag to indicate if token is a refresh token
 

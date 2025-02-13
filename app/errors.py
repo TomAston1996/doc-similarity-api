@@ -82,9 +82,7 @@ class InsufficientPermissionsException(AppException):
     pass
 
 
-def create_exception_hander(
-    status_code: int, detail: Any
-) -> Callable[[Request, Exception], JSONResponse]:
+def create_exception_hander(status_code: int, detail: Any) -> Callable[[Request, Exception], JSONResponse]:
     """
     Factory function that creates an exception handler for a given status code and detail
     """
@@ -107,27 +105,19 @@ def register_all_errors(app: FastAPI) -> None:
     """
     app.add_exception_handler(
         DocumentNotFoundException,
-        create_exception_hander(
-            status.HTTP_404_NOT_FOUND, "Document title or id not found"
-        ),
+        create_exception_hander(status.HTTP_404_NOT_FOUND, "Document title or id not found"),
     )
     app.add_exception_handler(
         UserNotFoundException,
-        create_exception_hander(
-            status.HTTP_404_NOT_FOUND, "User email or id not found"
-        ),
+        create_exception_hander(status.HTTP_404_NOT_FOUND, "User email or id not found"),
     )
     app.add_exception_handler(
         UserAlreadyExistsException,
-        create_exception_hander(
-            status.HTTP_409_CONFLICT, "User email or username already exists"
-        ),
+        create_exception_hander(status.HTTP_409_CONFLICT, "User email or username already exists"),
     )
     app.add_exception_handler(
         InvalidCredentialsException,
-        create_exception_hander(
-            status.HTTP_401_UNAUTHORIZED, "Password or email is invalid"
-        ),
+        create_exception_hander(status.HTTP_401_UNAUTHORIZED, "Password or email is invalid"),
     )
     app.add_exception_handler(
         InvalidTokenException,
@@ -135,15 +125,11 @@ def register_all_errors(app: FastAPI) -> None:
     )
     app.add_exception_handler(
         AccessTokenException,
-        create_exception_hander(
-            status.HTTP_401_UNAUTHORIZED, "Access token is invalid"
-        ),
+        create_exception_hander(status.HTTP_401_UNAUTHORIZED, "Access token is invalid"),
     )
     app.add_exception_handler(
         RefreshTokenException,
-        create_exception_hander(
-            status.HTTP_401_UNAUTHORIZED, "Refresh token is invalid"
-        ),
+        create_exception_hander(status.HTTP_401_UNAUTHORIZED, "Refresh token is invalid"),
     )
     app.add_exception_handler(
         InsufficientPermissionsException,

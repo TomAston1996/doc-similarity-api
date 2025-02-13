@@ -23,9 +23,7 @@ class ConfigManager(BaseSettings):
     A document similarity API that allows users to create and compare documents
     """
 
-    PROJECT_ROOT: str = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    )
+    PROJECT_ROOT: str = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     # db config-----------------------------------------
     POSTGRES_PASSWORD: str = os.environ["POSTGRES_PASSWORD"]
@@ -35,32 +33,28 @@ class ConfigManager(BaseSettings):
     POSTGRES_HOST_NAME: str = os.environ["POSTGRES_HOST_NAME"]
     DB_ENGINE: str = "postgresql"
 
-    DATABASE_URI_FORMAT: str = (
-        "{db_engine}+asyncpg://{user}:{password}@{host}:{port}/{database}"
-    )
+    DATABASE_URI_FORMAT: str = "{db_engine}+asyncpg://{user}:{password}@{host}:{port}/{database}"
 
-    DATABASE_URI: str = (
-        "{db_engine}+asyncpg://{user}:{password}@{host}:{port}/{database}".format(
-            db_engine=DB_ENGINE,
-            user=POSTGRES_USER,
-            password=POSTGRES_PASSWORD,
-            host=POSTGRES_HOST_NAME,
-            port=POSTGRES_HOST_PORT,
-            database=POSTGRES_DB,
-        )
+    DATABASE_URI: str = "{db_engine}+asyncpg://{user}:{password}@{host}:{port}/{database}".format(
+        db_engine=DB_ENGINE,
+        user=POSTGRES_USER,
+        password=POSTGRES_PASSWORD,
+        host=POSTGRES_HOST_NAME,
+        port=POSTGRES_HOST_PORT,
+        database=POSTGRES_DB,
     )
 
     # security config-----------------------------------------
     JWT_SECRET: str = os.environ["JWT_SECRET"]
     JWT_ALGORITHM: str = os.environ["JWT_ALGORITHM"]
     ACCESS_TOKEN_EXPIRY: int = 3600  # 1 hour
-    REFRESH_TOKEN_EXPIRY: int = 3600 * 24 * 2 # 2 days
+    REFRESH_TOKEN_EXPIRY: int = 3600 * 24 * 2  # 2 days
 
     # redis config-----------------------------------------
     REDIS_HOST: str = os.environ["REDIS_HOST"]
     REDIS_PORT: int = int(os.environ["REDIS_HOST_PORT"])
-    JTI_TOKEN_EXPIRY: int = 3600 # 1 hour
-    DOCS_CACHE_EXPIRY: int = 60 # 1 min
+    JTI_TOKEN_EXPIRY: int = 3600  # 1 hour
+    DOCS_CACHE_EXPIRY: int = 60  # 1 min
 
     class Config:
         case_sensitive = True

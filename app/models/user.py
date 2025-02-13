@@ -7,6 +7,7 @@ from enum import Enum
 
 from sqlalchemy import TIMESTAMP, Column, Integer, String, Enum as SQLEnum
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 from app.core.database import BaseModel
 
@@ -34,6 +35,8 @@ class User(BaseModel):
     created = Column(TIMESTAMP, server_default=func.now())
     updated = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
     role = Column(SQLEnum(UserRole), nullable=False, default=UserRole.USER)
+
+    documents = relationship("Document", back_populates="owner")
 
     def __repr__(self) -> str:
         """

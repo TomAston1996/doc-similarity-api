@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import database
-from app.core.dependencies import AccessTokenBearer, RoleChecker
+from app.core.dependencies import AccessTokenBearer, RoleChecker, get_current_user
 from app.core.pagination import Pagination, pagination_params
 from app.schema.document_schema import (
     DocumentCreateClientRequest,
@@ -20,6 +20,7 @@ from app.schema.document_schema import (
     PaginationClientResponse,
 )
 from app.service.document_service import DocumentService
+from app.models.user import User
 
 document_router = APIRouter()
 document_service = DocumentService()
@@ -106,11 +107,12 @@ async def create_document(
     db: Annotated[AsyncSession, Depends(database.get_db)],
     token: Annotated[dict, Depends(access_token_bearer)],
     _: Annotated[bool, Depends(user_role_checker)],
+    user: Annotated[User, Depends(get_current_user)],
 ) -> DocumentCreatedClientResponse:
     """
     CREATE a new document endpoint
     """
-    return await document_service.create_document(document_body=document_body, db=db)
+    return await document_service.create_document(document_body=document_body, db=db, user=user)
 
 
 @document_router.patch(
@@ -128,9 +130,7 @@ async def update_document(
     """
     UPDATE a document by id endpoint
     """
-    return await document_service.update_document(
-        id=id, document_body=document_body, db=db
-    )
+    return await document_service.update_document(id=id, document_body=document_body, db=db)
 
 
 @document_router.delete("/{id}", status_code=status.HTTP_200_OK)
